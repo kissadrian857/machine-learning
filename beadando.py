@@ -127,32 +127,67 @@ plt.legend();
 plt.show();
 
 # Default parameters
-K = 2;
+n_c = 2; # number of clusters
 
-# # K-means clustering with fix K
-kmeans_cluster = KMeans(n_clusters=K, random_state=2021);
-kmeans_cluster.fit(X);   #  fiting cluster model for X
-y_pred = kmeans_cluster.predict(X);   #  predicting cluster label
-sse = kmeans_cluster.inertia_;   # sum of squares of error (within sum of squares)
-centers = kmeans_cluster.cluster_centers_;  # centroid of clusters
+# Kmeans clustering
+kmeans = KMeans(n_clusters=n_c, random_state=2020);  # instance of KMeans class
+kmeans.fit(X.data);   #  fitting the model to data
+X_labels = kmeans.labels_;  # cluster labels
+X_centers = kmeans.cluster_centers_;  # centroid of clusters
+sse = kmeans.inertia_;  # sum of squares of error (within sum of squares)
+score = kmeans.score(X.data);  # negative error
+# both sse and score measure the goodness of clustering
 
-# # Davies-Bouldin goodness-of-fit
-# DB = davies_bouldin_score(X,y_pred);  
+# Davies-Bouldin goodness-of-fit
+DB = davies_bouldin_score(X.data,X_labels);
 
-# # Printing the results
-# print(f'Number of cluster: {K}');
-# print(f'Within SSE: {sse}');
-# print(f'Davies-Bouldin index: {DB}');
+# Printing the results
+print(f'Number of cluster: {n_c}');
+print(f'Within SSE: {sse}');
+print(f'Davies-Bouldin index: {DB}');
 
-# # Visualizing of datapoints with cluster labels and centroids
-# fig = plt.figure(10);
-# plt.title('Scatterplot of datapoints with clusters');
-# plt.xlabel('X1');
-# plt.ylabel('X2');
-# plt.scatter(X[:,0],X[:,1],s=50,c=y_pred);   #  dataponts with cluster label
-# plt.scatter(centers[:,0],centers[:,1],s=50,c='red');  #  centroids
-# plt.show();
+# PCA with limited components
+pca = PCA(n_components=2);
+pca.fit(X.data);
+X_pc = pca.transform(X.data);  #  data coordinates in the PC space
+centers_pc = pca.transform(X_centers);  # the cluster centroids in the PC space
 
+# Visualizing of clustering in the principal components space
+fig = plt.figure(11);
+plt.title('Clustering of the Iris data after PCA');
+plt.xlabel('PC1');
+plt.ylabel('PC2');
+plt.scatter(X_pc[:,0],X_pc[:,1],s=50,c=X_labels);  # data
+plt.scatter(centers_pc[:,0],centers_pc[:,1],s=200,c='red',marker='X');  # centroids
+plt.show();
+
+# Finding optimal cluster number
+Max_K = 31;  # maximum cluster number
+SSE = np.zeros((Max_K-2));  #  array for sum of squares errors
+DB = np.zeros((Max_K-2));  # array for Davies Bouldin indeces
+for i in range(Max_K-2):
+    n_c = i+2;
+    kmeans = KMeans(n_clusters=n_c, random_state=2020);
+    kmeans.fit(X.data);
+    X_labels = kmeans.labels_;
+    SSE[i] = kmeans.inertia_;
+    DB[i] = davies_bouldin_score(X.data,X_labels);
+
+# Visualization of SSE values    
+fig = plt.figure(12);
+plt.title('Sum of squares of error curve');
+plt.xlabel('Number of clusters');
+plt.ylabel('SSE');
+plt.plot(np.arange(2,Max_K),SSE, color='red')
+plt.show();
+
+# Visualization of DB scores
+fig = plt.figure(13);
+plt.title('Davies-Bouldin score curve');
+plt.xlabel('Number of clusters');
+plt.ylabel('DB index');
+plt.plot(np.arange(2,Max_K),DB, color='blue')
+plt.show();
 
 
 
