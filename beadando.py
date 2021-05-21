@@ -115,7 +115,7 @@ full_mean = np.reshape(pca.mean_,(1,54));
 PC_mean = pca.transform(full_mean);
 
 fig = plt.figure(8);
-plt.title('Dimension reduction of the Iris data by PCA');
+plt.title('Dimension reduction of the Divorce data by PCA');
 plt.xlabel('PC1');
 plt.ylabel('PC2');
 plt.scatter(X_pc[:,0], X_pc[:,1],s=50,c=y,
@@ -154,7 +154,7 @@ centers_pc = pca.transform(X_centers);  # the cluster centroids in the PC space
 
 # Visualizing of clustering in the principal components space
 fig = plt.figure(11);
-plt.title('Clustering of the Iris data after PCA');
+plt.title('Clustering of the Divorce data after PCA');
 plt.xlabel('PC1');
 plt.ylabel('PC2');
 plt.scatter(X_pc[:,0],X_pc[:,1],s=50,c=X_labels);  # data
