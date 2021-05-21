@@ -20,7 +20,7 @@ data = pd.read_csv('https://raw.githubusercontent.com/kissadrian857/machine-lear
 y = data['Divorce'].copy() #the actual results
 X = data.drop('Divorce', axis=1).copy() #data without the results
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, shuffle=True, random_state=2021)
-target_names = ["divorced","married"]
+target_names = ["married","divorced"]
 
 # Fitting logistic regression
 logreg_classifier = LogisticRegression(solver='liblinear');
@@ -40,10 +40,16 @@ plot_confusion_matrix(logreg_classifier, X_test, y_test, display_labels = target
 # Fitting naive Bayes classifier
 naive_bayes_classifier = GaussianNB();
 naive_bayes_classifier.fit(X_train,y_train);
-score_train_naive_bayes = naive_bayes_classifier.score(X_train,y_train);  #  goodness of fit
-score_test_naive_bayes = naive_bayes_classifier.score(X_test,y_test);  #  goodness of fit
+ypred_naive_bayes = naive_bayes_classifier.predict(X_train);  # spam prediction for train
+cm_naive_bayes_train = confusion_matrix(y_train, ypred_naive_bayes); # train confusion matrix
 ypred_naive_bayes = naive_bayes_classifier.predict(X_test);  # spam prediction
+cm_naive_bayes_test = confusion_matrix(y_test, ypred_naive_bayes); # test confusion matrix 
 yprobab_naive_bayes = naive_bayes_classifier.predict_proba(X_test);  #  prediction probabilities
+
+# Plotting non-normalized confusion matrix
+plot_confusion_matrix(naive_bayes_classifier, X_train, y_train, display_labels = target_names);
+
+plot_confusion_matrix(naive_bayes_classifier, X_test, y_test, display_labels = target_names); 
 
 
 
